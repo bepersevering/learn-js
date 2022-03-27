@@ -37,3 +37,4 @@ server-bundle/**
 .idea/**
 .idea/
 npm-debug.log*
+memo/backend/bin
