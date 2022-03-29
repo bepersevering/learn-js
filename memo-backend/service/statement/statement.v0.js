@@ -1,10 +1,3 @@
-
-/**
- * 结算单
- * @param {*} invoice 
- * @param {*} plays 
- * @returns 
- */
 function statement(invoice, plays) {
     let totalAmount = 0;
     let volumeCredits = 0;

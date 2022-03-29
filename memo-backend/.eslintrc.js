@@ -1,28 +1,14 @@
-// https://eslint.org/docs/user-guide/configuring
-
 module.exports = {
-  root: true,
-  parserOptions: {
-    parser: 'babel-eslint'
+  "env": {
+    "browser": true,
+    "es2021": true
   },
-  env: {
-    browser: true,
-  },
-  extends: [
-    // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
-    // consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
-    'plugin:vue/essential', 
-    // https://github.com/standard/standard/blob/master/docs/RULES-en.md
-    'standard'
+  "extends": [
+    "airbnb-base"
   ],
-  // required to lint *.vue files
-  plugins: [
-    'vue'
-  ],
-  "parser":"babel-eslint",
-  "globals":{
-      "logger":true,
-      "$":true
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
   },
   // add your custom rules here
   "rules": {
@@ -36,7 +22,7 @@ module.exports = {
     "no-console": 0, // disallow use of console 
     "no-constant-condition": 2, // disallow use of constant expressions in conditions 
     "no-control-regex": 2, // disallow control characters in regular expressions 
-    "no-debugger": 1, // disallow use of debugger 
+    // "no-debugger": 1, // disallow use of debugger 
     "no-dupe-args": 2, // disallow duplicate arguments in functions 
     "no-dupe-keys": 2, // disallow duplicate keys when creating object literals 
     "no-duplicate-case": 2, // disallow a duplicate case label. 
@@ -236,5 +222,5 @@ module.exports = {
     ],
 
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
-  }
+  },
 }
