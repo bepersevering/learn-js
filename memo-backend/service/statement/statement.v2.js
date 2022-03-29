@@ -1,9 +1,9 @@
 /**
  * 结算单
  * @param {Object} invoice - invoice
- * @param {String} invoice.customer - invoice customer
- * @param {String} invoice.performances[].playID - invoice performances playID
- * @param {String} invoice.performances[].audience - invoice performances audience
+ * @param {string} invoice.customer - invoice customer
+ * @param {string} invoice.performances[].playID - invoice performances playID
+ * @param {string} invoice.performances[].audience - invoice performances audience
  * @param {Object} plays - plays collection
  * @param {Object} plays[].name - play name
  * @param {Object} plays[].type - play type
@@ -36,27 +36,37 @@ function statement(invoice, plays) {
   return result;
 }
 
-function amountFor(perf, play) {
-  let thisAmout = 0;
+/**
+ * calculate performance for play
+ * @param {Object} aPerformance - a performance
+ * @param {string} aPerformance.playID - invoice performances playID
+ * @param {string} aPerformance.audience - invoice performances audience
+ * @param {Object} play - play
+ * @param {string} play.name - play name
+ * @param {string} play.type - play type
+ * @return {Number} amount
+ */
+function amountFor(aPerformance, play) {
+  let amount = 0;
   switch (play.type) {
   case 'tragedy':
-    thisAmout = 40000;
-    if (perf.audience > 30) {
-      thisAmout = thisAmout + 1000 * (perf.audience - 30);
+    amount = 40000;
+    if (aPerformance.audience > 30) {
+      amount = amount + 1000 * (aPerformance.audience - 30);
     }
     break;
   case 'comedy':
-    thisAmout = 30000;
-    if (perf.audience > 20) {
-      thisAmout = thisAmout + (10000 + 500 * (perf.audience - 20));
+    amount = 30000;
+    if (aPerformance.audience > 20) {
+      amount = amount + (10000 + 500 * (aPerformance.audience - 20));
     }
-    thisAmout = thisAmout + 300 * perf.audience;
+    amount = amount + 300 * aPerformance.audience;
     break;
   default:
     throw new Error(`unknown type: ${play.type}`);
   }
 
-  return thisAmout;
+  return amount;
 }
 
 module.exports = {

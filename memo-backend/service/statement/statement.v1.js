@@ -1,9 +1,9 @@
 /**
  * 结算单
  * @param {Object} invoice - invoice
- * @param {String} invoice.customer - invoice customer
- * @param {String} invoice.performances[].playID - invoice performances playID
- * @param {String} invoice.performances[].audience - invoice performances audience
+ * @param {string} invoice.customer - invoice customer
+ * @param {string} invoice.performances[].playID - invoice performances playID
+ * @param {string} invoice.performances[].audience - invoice performances audience
  * @param {Object} plays - plays collection
  * @param {Object} plays[].name - play name
  * @param {Object} plays[].type - play type
@@ -36,6 +36,16 @@ function statement(invoice, plays) {
   return result;
 }
 
+/**
+ * calculate performance for play
+ * @param {Object} perf - a performance
+ * @param {string} perf.playID - invoice performances playID
+ * @param {string} perf.audience - invoice performances audience
+ * @param {Object} play - play
+ * @param {string} play.name - play name
+ * @param {string} play.type - play type
+ * @return {Number} amount
+ */
 function amountFor(perf, play) {
   let thisAmout = 0;
   switch (play.type) {
