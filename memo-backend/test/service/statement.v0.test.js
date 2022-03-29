@@ -7,6 +7,6 @@ const result = 'Statement for BigCo\n '
                 + 'As You Like It: $580.00 (35 seats)\n '
                 + 'Othello: $500.00 (40 seats)\n'
                 + 'Amount owed is $1,730.00\nYou earned 47 credits\n';
-test('adds 1 + 2 to equal 3', () => {
+test('ok', () => {
   expect(statement.statement(invoice, plays)).toBe(result);
 });
