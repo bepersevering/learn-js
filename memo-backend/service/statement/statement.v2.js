@@ -14,6 +14,17 @@
  * @return {string} result - 结算单
  */
 function statement(invoice, plays) {
+  let result = `Statement for ${invoice.customer}\n`;
+
+  for (const perf of invoice.performances) {
+    // print line for this order
+    result = `${result} ${playFor(perf).name}: ${formatAsUSD(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
+  }
+
+  result = `${result}Amount owed is ${formatAsUSD(totalAmount() / 100)}\n`;
+  result = `${result}You earned ${totalVolumeCredits()} credits\n`;
+  return result;
+
   /**
    * calculate performance for play
    * @param {Object} aPerformance - a performance
@@ -49,13 +60,13 @@ function statement(invoice, plays) {
   }
 
   function volumeCreditsFor(perf) {
-    let result = 0;
-    result = result + Math.max(perf.audience - 30, 0);
+    let credits = 0;
+    credits = credits + Math.max(perf.audience - 30, 0);
     // add extra credit for every ten comedy attendees
     if (playFor(perf).type === 'comedy') {
-      result = result + Math.floor(perf.audience / 5);
+      credits = credits + Math.floor(perf.audience / 5);
     }
-    return result;
+    return credits;
   }
 
   function formatAsUSD(aNumber) {
@@ -75,23 +86,12 @@ function statement(invoice, plays) {
   }
 
   function totalAmount() {
-    let result = 0;
+    let amounts = 0;
     for (const perf of invoice.performances) {
-      result = result + amountFor(perf);
+      amounts = amounts + amountFor(perf);
     }
-    return result;
+    return amounts;
   }
-
-  let result = `Statement for ${invoice.customer}\n`;
-
-  for (const perf of invoice.performances) {
-    // print line for this order
-    result = `${result} ${playFor(perf).name}: ${formatAsUSD(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
-  }
-
-  result = `${result}Amount owed is ${formatAsUSD(totalAmount() / 100)}\n`;
-  result = `${result}You earned ${totalVolumeCredits()} credits\n`;
-  return result;
 }
 
 module.exports = {
