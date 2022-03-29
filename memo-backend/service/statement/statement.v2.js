@@ -10,6 +10,10 @@
  * @return {string} result - 结算单
  */
 function statement(invoice, plays) {
+  function playFor(aPerformance) {
+    return plays[aPerformance.playID];
+  }
+
   let totalAmount = 0;
   let volumeCredits = 0;
   let result = `Statement for ${invoice.customer}\n`;
@@ -20,7 +24,7 @@ function statement(invoice, plays) {
   });
 
   for (const perf of invoice.performances) {
-    const play = plays[perf.playID];
+    const play = playFor(plays[perf.playID]);
     const thisAmount = amountFor(perf, play);
 
     // add volume credits
