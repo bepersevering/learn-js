@@ -6,10 +6,33 @@
  * @param {String} invoice.performances[].audience - invoice performances audience
  * @param {Object} plays - plays collection
  * @param {Object} plays[].name - play name
- * @param {Object} plays[].name - play type
+ * @param {Object} plays[].type - play type
  * @return {string} result - 结算单
  */
 function statement(invoice, plays) {
+  const amountFor = (perf, play) => {
+    let thisAmout = 0;
+    switch (play.type) {
+    case 'tragedy':
+      thisAmout = 40000;
+      if (perf.audience > 30) {
+        thisAmout = thisAmout + 1000 * (perf.audience - 30);
+      }
+      break;
+    case 'comedy':
+      thisAmout = 30000;
+      if (perf.audience > 20) {
+        thisAmout = thisAmout + (10000 + 500 * (perf.audience - 20));
+      }
+      thisAmout = thisAmout + 300 * perf.audience;
+      break;
+    default:
+      throw new Error(`unknown type: ${play.type}`);
+    }
+
+    return thisAmout;
+  };
+
   let totalAmount = 0;
   let volumeCredits = 0;
   let result = `Statement for ${invoice.customer}\n`;
@@ -34,29 +57,6 @@ function statement(invoice, plays) {
   result = `${result}Amount owed is ${format(totalAmount / 100)}\n`;
   result = `${result}You earned ${volumeCredits} credits\n`;
   return result;
-}
-
-function amountFor(perf, play) {
-  let thisAmout = 0;
-  switch (play.type) {
-  case 'tragedy':
-    thisAmout = 40000;
-    if (perf.audience > 30) {
-      thisAmout = thisAmout + 1000 * (perf.audience - 30);
-    }
-    break;
-  case 'comedy':
-    thisAmout = 30000;
-    if (perf.audience > 20) {
-      thisAmout = thisAmout + (10000 + 500 * (perf.audience - 20));
-    }
-    thisAmout = thisAmout + 300 * perf.audience;
-    break;
-  default:
-    throw new Error(`unknown type: ${play.type}`);
-  }
-
-  return thisAmout;
 }
 
 module.exports = {

@@ -6,7 +6,7 @@
  * @param {String} invoice.performances[].audience - invoice performances audience
  * @param {Object} plays - plays collection
  * @param {Object} plays[].name - play name
- * @param {Object} plays[].name - play type
+ * @param {Object} plays[].type - play type
  * @return {string} result - 结算单
  */
 function statement(invoice, plays) {
