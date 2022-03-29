@@ -1,12 +1,12 @@
 /**
  * 结算单
  * @param {Object} invoice - invoice
- * @param {String} invoice.customer - invoice customer
- * @param {String} invoice.performances[].playID - invoice performances playID
- * @param {String} invoice.performances[].audience - invoice performances audience
+ * @param {string} invoice.customer - invoice customer
+ * @param {string} invoice.performances[].playID - invoice performances playID
+ * @param {string} invoice.performances[].audience - invoice performances audience
  * @param {Object} plays - plays collection
  * @param {Object} plays[].name - play name
- * @param {Object} plays[].name - play type
+ * @param {Object} plays[].type - play type
  * @return {string} result - 结算单
  */
 function statement(invoice, plays) {
