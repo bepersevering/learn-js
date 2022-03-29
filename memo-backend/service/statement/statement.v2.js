@@ -1,5 +1,9 @@
 /**
  * 结算单
+ * 使用拆分循环（227） 分离出累加过程；
+ * 使用移动语句（223） 将累加变量的声明与累加过程集中到一起；
+ * 使用提炼函数（106） 提炼出计算总数的函数；
+ * 使用内联变量（123） 完全移除中间变量。
  * @param {Object} invoice - invoice
  * @param {string} invoice.customer - invoice customer
  * @param {string} invoice.performances[].playID - invoice performances playID
