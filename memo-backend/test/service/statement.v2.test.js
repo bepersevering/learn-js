@@ -8,5 +8,6 @@ const result = 'Statement for BigCo\n '
                 + 'Othello: $500.00 (40 seats)\n'
                 + 'Amount owed is $1,730.00\nYou earned 47 credits\n';
 test('ok', () => {
+  console.log(result);
   expect(statement.statement(invoice, plays)).toBe(result);
 });
