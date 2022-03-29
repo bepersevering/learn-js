@@ -78,10 +78,8 @@ function statement(invoice, plays) {
     totalAmount = totalAmount + amountFor(perf);
   }
 
-  const volumeCredits = totalVolumeCredits();
-
   result = `${result}Amount owed is ${formatAsUSD(totalAmount / 100)}\n`;
-  result = `${result}You earned ${volumeCredits} credits\n`;
+  result = `${result}You earned ${totalVolumeCredits()} credits\n`;
   return result;
 }
 
