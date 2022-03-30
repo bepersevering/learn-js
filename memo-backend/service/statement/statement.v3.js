@@ -1,3 +1,36 @@
+
+const playsExample = {
+  hamlet: {
+    name: 'Hamlet',
+    type: 'tragedy'
+  },
+  'as-like': {
+    name: 'As You Like It',
+    type: 'comedy'
+  },
+  othello: {
+    name: 'Othello',
+    type: 'tragedy'
+  }
+};
+
+const invoincesData = {
+  customer:     'BigCo',
+  performances: [{
+    playID:   'hamlet',
+    audience: 55
+  },
+  {
+    playID:   'as-like',
+    audience: 35
+  },
+  {
+    playID:   'othello',
+    audience: 40
+  }
+  ]
+};
+
 /**
  * 结算单
  * 使用拆分循环（227） 分离出累加过程；
@@ -14,13 +47,31 @@
  * @return {string} result - 结算单
  */
 function statement(invoice, plays) {
-  return renderPlainText(invoice, plays);
+  const customerData = {};
+  customerData.customer = invoice.customer;
+  customerData.performances = invoice.performances.map(enrichPerformance);
+  return renderPlainText(customerData, plays);
+
+  // 现在我只是简单地返回了一个aPerformance对象的副本， 但马上我就会往这
+  // 条记录中添加新的数据。 返回副本的原因是， 我不想修改传给函数的参数， 我总
+  // 是尽量保持数据不可变（immutable） ——可变的状态会很快变成烫手的山芋。
+  function enrichPerformance(aPerformance) {
+    const result = {};
+    // 返回一个浅副本
+    Object.assign(result, aPerformance);
+    result.play = playFor(aPerformance);
+    return result;
+  }
+  // {playID: 'hamlet', audience: 55}
+  function playFor(aPerformance) {
+    return plays[aPerformance.playID];
+  }
 }
 
-function renderPlainText(invoice, plays) {
-  let result = `Statement for ${invoice.customer}\n`;
+function renderPlainText(customerData, plays) {
+  let result = `Statement for ${customerData.customer}\n`;
 
-  for (const perf of invoice.performances) {
+  for (const perf of customerData.performances) {
     // print line for this order
     result = `${result} ${playFor(perf).name}: ${formatAsUSD(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
   }
@@ -83,7 +134,7 @@ function renderPlainText(invoice, plays) {
 
   function totalVolumeCredits() {
     let volumeCredits = 0;
-    for (const perf of invoice.performances) {
+    for (const perf of customerData.performances) {
       volumeCredits = volumeCredits + volumeCreditsFor(perf);
     }
     return volumeCredits;
@@ -91,7 +142,7 @@ function renderPlainText(invoice, plays) {
 
   function totalAmount() {
     let amounts = 0;
-    for (const perf of invoice.performances) {
+    for (const perf of customerData.performances) {
       amounts = amounts + amountFor(perf);
     }
     return amounts;
