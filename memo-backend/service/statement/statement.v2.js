@@ -1,5 +1,9 @@
 /**
  * 结算单
+ * 使用拆分循环（227） 分离出累加过程；
+ * 使用移动语句（223） 将累加变量的声明与累加过程集中到一起；
+ * 使用提炼函数（106） 提炼出计算总数的函数；
+ * 使用内联变量（123） 完全移除中间变量。
  * @param {Object} invoice - invoice
  * @param {string} invoice.customer - invoice customer
  * @param {string} invoice.performances[].playID - invoice performances playID
@@ -10,6 +14,17 @@
  * @return {string} result - 结算单
  */
 function statement(invoice, plays) {
+  let result = `Statement for ${invoice.customer}\n`;
+
+  for (const perf of invoice.performances) {
+    // print line for this order
+    result = `${result} ${playFor(perf).name}: ${formatAsUSD(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
+  }
+
+  result = `${result}Amount owed is ${formatAsUSD(totalAmount() / 100)}\n`;
+  result = `${result}You earned ${totalVolumeCredits()} credits\n`;
+  return result;
+
   /**
    * calculate performance for play
    * @param {Object} aPerformance - a performance
@@ -45,13 +60,13 @@ function statement(invoice, plays) {
   }
 
   function volumeCreditsFor(perf) {
-    let result = 0;
-    result = result + Math.max(perf.audience - 30, 0);
+    let credits = 0;
+    credits = credits + Math.max(perf.audience - 30, 0);
     // add extra credit for every ten comedy attendees
     if (playFor(perf).type === 'comedy') {
-      result = result + Math.floor(perf.audience / 5);
+      credits = credits + Math.floor(perf.audience / 5);
     }
-    return result;
+    return credits;
   }
 
   function formatAsUSD(aNumber) {
@@ -69,18 +84,14 @@ function statement(invoice, plays) {
     }
     return volumeCredits;
   }
-  let totalAmount = 0;
-  let result = `Statement for ${invoice.customer}\n`;
 
-  for (const perf of invoice.performances) {
-    // print line for this order
-    result = `${result} ${playFor(perf).name}: ${formatAsUSD(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
-    totalAmount = totalAmount + amountFor(perf);
+  function totalAmount() {
+    let amounts = 0;
+    for (const perf of invoice.performances) {
+      amounts = amounts + amountFor(perf);
+    }
+    return amounts;
   }
-
-  result = `${result}Amount owed is ${formatAsUSD(totalAmount / 100)}\n`;
-  result = `${result}You earned ${totalVolumeCredits()} credits\n`;
-  return result;
 }
 
 module.exports = {

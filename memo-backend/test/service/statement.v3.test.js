@@ -1,6 +1,6 @@
 const invoice = require('../../service/statement/invoinces.json');
 const plays = require('../../service/statement/plays.json');
-const statement = require('../../service/statement/statement.v2');
+const statement = require('../../service/statement/statement.v3');
 
 const result = 'Statement for BigCo\n '
                 + 'Hamlet: $650.00 (55 seats)\n '
