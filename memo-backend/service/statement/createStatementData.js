@@ -37,7 +37,6 @@ function createStatementData(invoice, plays) {
   }
   // {playID: 'hamlet', audience: 55}
   function playFor(aPerformance) {
-    console.log(`aPerformance.playID = ${aPerformance.playID}, plays[aPerformance.playID] = ${JSON.stringify(plays[aPerformance.playID])}\n`);
     return plays[aPerformance.playID];
   }
 
