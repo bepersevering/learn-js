@@ -32,6 +32,38 @@ const invoincesData = {
 };
 
 /**
+{
+  customer:     'BigCo',
+  performances: [
+    {
+      playID:   'hamlet',
+      audience: 55,
+      play:     {
+        name: 'Hamlet',
+        type: 'tragedy'
+      }
+    },
+    {
+      playID:   'as-like',
+      audience: 35,
+      play:     {
+        name: 'As You Like It',
+        type: 'comedy'
+      }
+    },
+    {
+      playID:   'othello',
+      audience: 40,
+      play:     {
+        name: 'Othello',
+        type: 'tragedy'
+      }
+    }
+  ]
+}
+ */
+
+/**
  * 结算单
  * 使用拆分循环（227） 分离出累加过程；
  * 使用移动语句（223） 将累加变量的声明与累加过程集中到一起；
@@ -50,6 +82,7 @@ function statement(invoice, plays) {
   const customerData = {};
   customerData.customer = invoice.customer;
   customerData.performances = invoice.performances.map(enrichPerformance);
+  console.log(`customerData = ${JSON.stringify(customerData)}`);
   return renderPlainText(customerData, plays);
 
   // 现在我只是简单地返回了一个aPerformance对象的副本， 但马上我就会往这
@@ -59,26 +92,15 @@ function statement(invoice, plays) {
     const result = {};
     // 返回一个浅副本
     Object.assign(result, aPerformance);
-    result.play = playFor(aPerformance);
+    result.play = playFor(result);
+    result.amount = amountFor(result);
     return result;
   }
   // {playID: 'hamlet', audience: 55}
   function playFor(aPerformance) {
+    console.log(`aPerformance.playID = ${aPerformance.playID}, plays[aPerformance.playID] = ${JSON.stringify(plays[aPerformance.playID])}\n`);
     return plays[aPerformance.playID];
   }
-}
-
-function renderPlainText(customerData, plays) {
-  let result = `Statement for ${customerData.customer}\n`;
-
-  for (const perf of customerData.performances) {
-    // print line for this order
-    result = `${result} ${playFor(perf).name}: ${formatAsUSD(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
-  }
-
-  result = `${result}Amount owed is ${formatAsUSD(totalAmount() / 100)}\n`;
-  result = `${result}You earned ${totalVolumeCredits()} credits\n`;
-  return result;
 
   /**
    * calculate performance for play
@@ -89,7 +111,7 @@ function renderPlainText(customerData, plays) {
    */
   function amountFor(aPerformance) {
     let amount = 0;
-    switch (playFor(aPerformance).type) {
+    switch (aPerformance.play.type) {
     case 'tragedy':
       amount = 40000;
       if (aPerformance.audience > 30) {
@@ -104,21 +126,30 @@ function renderPlainText(customerData, plays) {
       amount = amount + 300 * aPerformance.audience;
       break;
     default:
-      throw new Error(`unknown type: ${playFor(aPerformance).type}`);
+      throw new Error(`unknown type: ${aPerformance.play.type}`);
     }
 
     return amount;
   }
+}
 
-  function playFor(aPerformance) {
-    return plays[aPerformance.playID];
+function renderPlainText(customerData) {
+  let result = `Statement for ${customerData.customer}\n`;
+
+  for (const perf of customerData.performances) {
+    // print line for this order
+    result = `${result} ${perf.play.name}: ${formatAsUSD(perf.amount / 100)} (${perf.audience} seats)\n`;
   }
+
+  result = `${result}Amount owed is ${formatAsUSD(totalAmount() / 100)}\n`;
+  result = `${result}You earned ${totalVolumeCredits()} credits\n`;
+  return result;
 
   function volumeCreditsFor(perf) {
     let credits = 0;
     credits = credits + Math.max(perf.audience - 30, 0);
     // add extra credit for every ten comedy attendees
-    if (playFor(perf).type === 'comedy') {
+    if (perf.play.type === 'comedy') {
       credits = credits + Math.floor(perf.audience / 5);
     }
     return credits;
@@ -143,7 +174,7 @@ function renderPlainText(customerData, plays) {
   function totalAmount() {
     let amounts = 0;
     for (const perf of customerData.performances) {
-      amounts = amounts + amountFor(perf);
+      amounts = amounts + perf.amount;
     }
     return amounts;
   }
