@@ -82,6 +82,8 @@ function statement(invoice, plays) {
   const customerData = {};
   customerData.customer = invoice.customer;
   customerData.performances = invoice.performances.map(enrichPerformance);
+  customerData.totalAmount = totalAmount(customerData);
+  customerData.totalVolumeCredits = totalVolumeCredits(customerData);
   console.log(`customerData = ${JSON.stringify(customerData)}`);
   return renderPlainText(customerData, plays);
 
@@ -142,6 +144,22 @@ function statement(invoice, plays) {
     }
     return credits;
   }
+
+  function totalVolumeCredits(data) {
+    let volumeCredits = 0;
+    for (const perf of data.performances) {
+      volumeCredits = volumeCredits + perf.volumeCredits;
+    }
+    return volumeCredits;
+  }
+
+  function totalAmount(data) {
+    let amounts = 0;
+    for (const perf of data.performances) {
+      amounts = amounts + perf.amount;
+    }
+    return amounts;
+  }
 }
 
 function renderPlainText(customerData) {
@@ -152,8 +170,8 @@ function renderPlainText(customerData) {
     result = `${result} ${perf.play.name}: ${formatAsUSD(perf.amount / 100)} (${perf.audience} seats)\n`;
   }
 
-  result = `${result}Amount owed is ${formatAsUSD(totalAmount() / 100)}\n`;
-  result = `${result}You earned ${totalVolumeCredits()} credits\n`;
+  result = `${result}Amount owed is ${formatAsUSD(customerData.totalAmount / 100)}\n`;
+  result = `${result}You earned ${customerData.totalVolumeCredits} credits\n`;
   return result;
 
   function formatAsUSD(aNumber) {
@@ -162,22 +180,6 @@ function renderPlainText(customerData) {
       currency:              'USD',
       minimumFractionDigits: 2
     }).format(aNumber);
-  }
-
-  function totalVolumeCredits() {
-    let volumeCredits = 0;
-    for (const perf of customerData.performances) {
-      volumeCredits = volumeCredits + perf.volumeCredits;
-    }
-    return volumeCredits;
-  }
-
-  function totalAmount() {
-    let amounts = 0;
-    for (const perf of customerData.performances) {
-      amounts = amounts + perf.amount;
-    }
-    return amounts;
   }
 }
 
