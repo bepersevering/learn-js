@@ -1,70 +1,6 @@
 
-const playsExample = {
-  hamlet: {
-    name: 'Hamlet',
-    type: 'tragedy'
-  },
-  'as-like': {
-    name: 'As You Like It',
-    type: 'comedy'
-  },
-  othello: {
-    name: 'Othello',
-    type: 'tragedy'
-  }
-};
-
-const invoincesData = {
-  customer:     'BigCo',
-  performances: [{
-    playID:   'hamlet',
-    audience: 55
-  },
-  {
-    playID:   'as-like',
-    audience: 35
-  },
-  {
-    playID:   'othello',
-    audience: 40
-  }
-  ]
-};
-
 /**
-{
-  customer:     'BigCo',
-  performances: [
-    {
-      playID:   'hamlet',
-      audience: 55,
-      play:     {
-        name: 'Hamlet',
-        type: 'tragedy'
-      }
-    },
-    {
-      playID:   'as-like',
-      audience: 35,
-      play:     {
-        name: 'As You Like It',
-        type: 'comedy'
-      }
-    },
-    {
-      playID:   'othello',
-      audience: 40,
-      play:     {
-        name: 'Othello',
-        type: 'tragedy'
-      }
-    }
-  ]
-}
- */
-
-/**
- * 结算单
+ * 计算结算单数据
  * 使用拆分循环（227） 分离出累加过程；
  * 使用移动语句（223） 将累加变量的声明与累加过程集中到一起；
  * 使用提炼函数（106） 提炼出计算总数的函数；
@@ -76,15 +12,16 @@ const invoincesData = {
  * @param {Object} plays - plays collection
  * @param {Object} plays[].name - play name
  * @param {Object} plays[].type - play type
- * @return {string} result - 结算单
+ * @return {string} result - 计算结算单数据
  */
-function statement(invoice, plays) {
+function createStatementData(invoice, plays) {
   const customerData = {};
   customerData.customer = invoice.customer;
   customerData.performances = invoice.performances.map(enrichPerformance);
   customerData.totalAmount = totalAmount(customerData);
   customerData.totalVolumeCredits = totalVolumeCredits(customerData);
-  return renderPlainText(customerData, plays);
+  console.log(`customerData = ${JSON.stringify(customerData)}`);
+  return customerData;
 
   // 现在我只是简单地返回了一个aPerformance对象的副本， 但马上我就会往这
   // 条记录中添加新的数据。 返回副本的原因是， 我不想修改传给函数的参数， 我总
@@ -100,16 +37,17 @@ function statement(invoice, plays) {
   }
   // {playID: 'hamlet', audience: 55}
   function playFor(aPerformance) {
+    console.log(`aPerformance.playID = ${aPerformance.playID}, plays[aPerformance.playID] = ${JSON.stringify(plays[aPerformance.playID])}\n`);
     return plays[aPerformance.playID];
   }
 
   /**
-   * calculate performance for play
-   * @param {Object} aPerformance - a performance
-   * @param {string} aPerformance.playID - invoice performances playID
-   * @param {string} aPerformance.audience - invoice performances audience
-   * @return {Number} amount
-   */
+     * calculate performance for play
+     * @param {Object} aPerformance - a performance
+     * @param {string} aPerformance.playID - invoice performances playID
+     * @param {string} aPerformance.audience - invoice performances audience
+     * @return {Number} amount
+     */
   function amountFor(aPerformance) {
     let amount = 0;
     switch (aPerformance.play.type) {
@@ -153,27 +91,6 @@ function statement(invoice, plays) {
   }
 }
 
-function renderPlainText(customerData) {
-  let result = `Statement for ${customerData.customer}\n`;
-
-  for (const perf of customerData.performances) {
-    // print line for this order
-    result = `${result} ${perf.play.name}: ${formatAsUSD(perf.amount / 100)} (${perf.audience} seats)\n`;
-  }
-
-  result = `${result}Amount owed is ${formatAsUSD(customerData.totalAmount / 100)}\n`;
-  result = `${result}You earned ${customerData.totalVolumeCredits} credits\n`;
-  return result;
-
-  function formatAsUSD(aNumber) {
-    return new Intl.NumberFormat('en-US', {
-      style:                 'currency',
-      currency:              'USD',
-      minimumFractionDigits: 2
-    }).format(aNumber);
-  }
-}
-
 module.exports = {
-  statement
+  createStatementData
 };
